@@ -3,8 +3,11 @@ import CompListEntradas from './MyComponents/CompEntradas';
 import './firebase';
 import {ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import CompListRegistrados from './MyComponents/CompRegistrados';
 
-function App() {
+const App = () => {
+
+  //Crear state de registrado
 
   return (
     <React.Fragment>
@@ -15,14 +18,14 @@ function App() {
       <div className="row">
         <div className="one-half column">
           {
-            //Lado Izquierdo
+            <CompListEntradas
+            />   
           }
         </div>
         <div className="one-half column">
-        <h2>Lado derecho</h2>
-        {
-            <CompListEntradas/>   
-
+        {  
+            <CompListRegistrados
+            />
         }
         </div>
         
@@ -31,6 +34,6 @@ function App() {
     </div>
     </React.Fragment>
   );
-}
+};
 
 export default App;

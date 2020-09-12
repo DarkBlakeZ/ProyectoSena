@@ -9,15 +9,15 @@ import { toast } from 'react-toastify';
 const CompListEntradas = () => {
 
     const [entradas, setEntradas] = useState([]);
-    const [IdActual, setIdActual] = useState("");
     const [registrados, setregistrados] = useState([]);
+    const [IdActual, setIdActual] = useState("");
     
-    const addOrEditForm = async (ObjectE) =>{
+    const addOrEditForm = async (nomdoc,ObjectE) =>{
 
         try {
             if(IdActual===''){
         
-                await db.collection('entradas').doc().set(ObjectE);
+                await db.collection('entradas').doc(nomdoc).set(ObjectE);
         
                 toast('Agregado exitosamente',{
         
@@ -62,13 +62,13 @@ const CompListEntradas = () => {
         });  
     }
 
-    const getEntradasByDocument = (docu) => {
-        db.collection('entradas').where("documento","==",docu).onSnapshot((querySnapshot)=>{
+    const getregistradosByDocument = (docu) => {
+        db.collection('registrados').doc(docu).onSnapshot((querySnapshot)=>{
             const docs = [];
             querySnapshot.forEach((doc) => {
                 docs.push({...doc.data(), id:doc.id});
             })
-            setEntradas(docs)
+            setregistrados(docs)
         });  
     }
 
@@ -82,7 +82,7 @@ const CompListEntradas = () => {
     return(
     <React.Fragment>
         <div>
-        <CompForm {...{addOrEditForm,IdActual,entradas,getEntradasByDocument,setEntradas,registrados,setregistrados}}/>
+        <CompForm {...{addOrEditForm,IdActual,entradas,registrados,getregistradosByDocument,setEntradas}}/>
         {entradas.map(
             entrada => (
             <div className="entrada" key={entrada.id}>

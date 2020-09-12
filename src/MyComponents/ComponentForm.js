@@ -7,7 +7,7 @@ const CompForm = (props) =>{
 
         const handleSubmit = e =>{
             e.preventDefault();
-            props.addOrEditForm(entrada);
+            props.addOrEditForm(entrada.documento,entrada);
             actualizar_entrada({
                 tipopersona:'',
                 documento:'',
@@ -53,24 +53,15 @@ const CompForm = (props) =>{
             const doc = await db.collection('entradas').doc(id).get();
             actualizar_entrada(doc.data());
                 }
-        
-        const getEntradaByDocument = async(docu) => {
-            await db.collection('registrados').where("documento","==",docu).onSnapshot((querySnapshot)=>{
-                const docs = [];
-                querySnapshot.forEach((doc) => {
-                    docs.push({...doc.data(), id:doc.id});
-                })
-                props.setregistrados(docs)
-            });  
-        }
 
-        const BuscarPorDocumento = async(docu) =>{
-            await getEntradaByDocument(docu) 
+        const BuscarDocumentoE = async(docu) =>{
+            const doc = await db.collection('registrados').doc(docu).get();
+            const NewNom = doc.data().nombreR
+            
             actualizar_entrada({
-                nombre: props.registrados[0].nombre
-            })
+                nombre: NewNom
+                });
         }
-
 
         useEffect(()=>{
 
@@ -96,19 +87,17 @@ const CompForm = (props) =>{
 
 <h2>Insertar ingreso</h2>
 
-<form
-    //onSubmit={handleSubmit}
-    
->
+<form>
     <div className="row">
-    <label for="tipopersonas">Tipo de persona</label>
-  <select class="u-full-width" id="tipopersonas" name="tipopersona" onChange={actualizarState}>
+    <label htmlFor="tipopersonas">Tipo de persona</label>
+  <select className="u-full-width" id="tipopersonas" name="tipopersona" onChange={actualizarState}>
   <option id="idfuncionario" name="tipopersona" value={"No se especifico"}>--Seleccione uno--</option>
     <option id="idfuncionario" name="tipopersona" value={"funcionario"}>Funcionario</option>
     <option id="idaprendiz" name="tipopersona" value={"aprendiz"}>Aprendiz</option>
     <option id="idvisitante" name="tipopersona" value={"visitante"}>Visitante</option>
   </select>
     </div>
+    <div className="box">
     <label>Documento: </label>
     <input
         type="text"
@@ -118,6 +107,15 @@ const CompForm = (props) =>{
         onChange={actualizarState}
         value={documento}
     />
+    <button
+        type="submit"
+        className="u-full-width button-primary"
+        onClick={()=>BuscarDocumentoE(entrada.documento)}
+    >Buscar
+    </button>
+    
+
+    </div>
     <label>Nombre: </label>
     <input
         type="text"
@@ -162,19 +160,14 @@ const CompForm = (props) =>{
     <button
         type="submit"
         className="u-full-width button-primary"
+        onClick={handleSubmit}
     >
         {props.IdActual === '' ? 'Guardar' : 'Actualizar'}
     </button>
 
 </form>
 
-    <button
-        type="submit"
-        className="u-full-width button-primary"
-        onClick={()=>BuscarPorDocumento(entrada.documento)}
-    >
-        Buscar
-    </button>
+    
         </React.Fragment>
 
       ) 
