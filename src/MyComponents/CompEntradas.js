@@ -2,6 +2,7 @@ import React , {useEffect , useState} from 'react';
 import CompForm from './ComponentForm';
 import {db} from '../firebase';
 import { toast } from 'react-toastify';
+import AppM from './ModalListaEntradas'
 
 //import '../includes/boostrap'
 
@@ -83,23 +84,7 @@ const CompListEntradas = () => {
     <React.Fragment>
         <div>
         <CompForm {...{addOrEditForm,IdActual,entradas,registrados,getregistradosByDocument,setEntradas}}/>
-        {entradas.map(
-            entrada => (
-            <div className="entrada" key={entrada.id}>
-                <p>Tipo persona : <span>{entrada.tipopersona}</span></p>
-                <p>Documento: <span>{entrada.documento}</span></p>
-                <p>Nombre: <span>{entrada.nombre}</span></p>
-                <p>Fecha: <span>{entrada.fecha}</span></p>
-                <p>Tiempo: <span>{entrada.tiempo}</span></p>
-                <p>Placa: <span>{entrada.placa}</span></p>
-                <p>Pertenencias: <span>{entrada.pertenencias}</span></p>
-                <button type="button" className="btn btn-success" onClick={() => setIdActual(entrada.id)}>Editar</button>
-                <button type="button" className="btn btn-danger" onClick={() => onDelete(entrada.id)}>Eliminar</button>
-            </div>
-            )
-            
-
-        )}
+        <AppM {...{entradas, onDelete, setIdActual,setEntradas, getEntradas}} />
         </div>
     </React.Fragment>
 )

@@ -7,6 +7,10 @@ const CompForm = (props) =>{
 
         const handleSubmit = e =>{
             e.preventDefault();
+            if(documento.trim() === '' || nombre.trim()==='' || tipopersona==='' || fecha.trim()===''){
+                actualizarError(true)
+                return;
+            }else{
             props.addOrEditForm(entrada.documento,entrada);
             actualizar_entrada({
                 tipopersona:'',
@@ -17,7 +21,13 @@ const CompForm = (props) =>{
                 placa:'',
                 pertenencias:''
             });
+            actualizarError(false);
+
         }
+
+        }
+
+        const [error, actualizarError] = useState(false)
 
         //Crear state de entrada
 
@@ -43,7 +53,7 @@ const CompForm = (props) =>{
 
         //Extraer los valores
         
-        const {documento,nombre,fecha,tiempo,placa,pertenencias} = entrada;
+        const {tipopersona,documento,nombre,fecha,tiempo,placa,pertenencias} = entrada;
 
 
         //-----
@@ -56,11 +66,16 @@ const CompForm = (props) =>{
 
         const BuscarDocumentoE = async(docu) =>{
             const doc = await db.collection('registrados').doc(docu).get();
+            if(doc.data()!== ''){
             const NewNom = doc.data().nombreR
-            
+            console.log(doc)
             actualizar_entrada({
                 nombre: NewNom
                 });
+            }else{
+                alert('No Existe')
+                return
+            }
         }
 
         useEffect(()=>{
@@ -87,18 +102,22 @@ const CompForm = (props) =>{
 
 <h2>Insertar ingreso</h2>
 
+{
+    error ? <p className="alerta-error">Ahi campos obligatorios (*)</p> : null
+}
+
 <form>
     <div className="row">
-    <label htmlFor="tipopersonas">Tipo de persona</label>
-  <select className="u-full-width" id="tipopersonas" name="tipopersona" onChange={actualizarState}>
-  <option id="idfuncionario" name="tipopersona" value={"No se especifico"}>--Seleccione uno--</option>
+    <label htmlFor="tipopersonas">Tipo de persona(*):</label>
+  <select className="u-full-width" id="tipopersonas" name="tipopersona" onChange={actualizarState} required>
+  <option id="idfuncionario" name="tipopersona" value={""}>--Seleccione uno--</option>
     <option id="idfuncionario" name="tipopersona" value={"funcionario"}>Funcionario</option>
     <option id="idaprendiz" name="tipopersona" value={"aprendiz"}>Aprendiz</option>
     <option id="idvisitante" name="tipopersona" value={"visitante"}>Visitante</option>
   </select>
     </div>
     <div className="box">
-    <label>Documento: </label>
+    <label>Documento(*): </label>
     <input
         type="text"
         name="documento"
@@ -106,6 +125,7 @@ const CompForm = (props) =>{
         placeholder="Ingresar el documento"
         onChange={actualizarState}
         value={documento}
+        required
     />
     <button
         type="submit"
@@ -116,7 +136,7 @@ const CompForm = (props) =>{
     
 
     </div>
-    <label>Nombre: </label>
+    <label>Nombre(*): </label>
     <input
         type="text"
         name="nombre"
@@ -124,6 +144,7 @@ const CompForm = (props) =>{
         placeholder="Ingresar el nombre"
         onChange={actualizarState}
         value={nombre}
+        required
     />
     <label>Fecha: </label>
     <input

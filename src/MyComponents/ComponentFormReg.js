@@ -7,6 +7,10 @@ const CompFormReg = (props) =>{
 
         const handleSubmit = e =>{
             e.preventDefault();
+            if(documentoR.trim() === '' || nombreR.trim()==='' || tipopersonaR==='' || areaR.trim()===''){
+                actualizarError(true)
+                return;
+            }else{
             props.addOrEditFormReg(registrado.documentoR,registrado);
             actualizar_registrado({
                 tipopersonaR:'',
@@ -15,6 +19,7 @@ const CompFormReg = (props) =>{
                 fichaR:'',
                 areaR:''
             });
+        }
         }
 
         //Crear state de registrado
@@ -26,6 +31,10 @@ const CompFormReg = (props) =>{
             fichaR:'',
             areaR:''
         });
+
+        //State de error
+
+        const [error, actualizarError] = useState(false)
         
         //Funcion para leer todo lo que escribe el usuario
 
@@ -39,7 +48,10 @@ const CompFormReg = (props) =>{
 
         //Extraer los valores
         
-        const {documentoR,nombreR,fichaR,areaR} = registrado;
+        const {tipopersonaR,documentoR,nombreR,fichaR,areaR} = registrado;
+
+        //Campos obligatorios
+
 
 
         //-----
@@ -80,7 +92,9 @@ const CompFormReg = (props) =>{
         <React.Fragment>
 
 <h2>Insertar Usuario</h2>
-
+{
+    error ? <p className="alerta-error">Ahi campos obligatorios (*)</p> : null
+}
 <form
     onSubmit={handleSubmit}
     
@@ -102,6 +116,7 @@ const CompFormReg = (props) =>{
         placeholder="Ingresar el documento"
         onChange={actualizarState}
         value={documentoR}
+        required
     />
     <label>Nombre: </label>
     <input
@@ -109,14 +124,17 @@ const CompFormReg = (props) =>{
         name="nombreR"
         className="u-full-width"
         placeholder="Ingresar el nombre"
+        required
         onChange={actualizarState}
         value={nombreR}
+        
     />
     <label>Ficha: </label>
     <input
         type="text"
         name="fichaR"
         className="u-full-width"
+        placeholder="Ingresar ficha"
         onChange={actualizarState}
         value={fichaR}
     />
@@ -125,6 +143,7 @@ const CompFormReg = (props) =>{
         type="text"
         name="areaR"
         className="u-full-width"
+        placeholder="Ingresar area"
         onChange={actualizarState}
         value={areaR}
     />

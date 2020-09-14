@@ -2,6 +2,7 @@ import React , {useEffect , useState} from 'react';
 import CompFormReg from './ComponentFormReg';
 import {db} from '../firebase';
 import { toast } from 'react-toastify';
+import AppMR from './ModalListaRegistrados';
 
 //import '../includes/boostrap'
 
@@ -82,21 +83,8 @@ const CompListRegistrados = () => {
     <React.Fragment>
         <div>
         <CompFormReg {...{addOrEditFormReg,IdActual,registrados,getregistradosByDocument,setregistrados}}/>
-        {registrados.map(
-            registrado => (
-            <div className="entrada" key={registrado.id}>
-                <p>Tipo persona : <span>{registrado.tipopersonaR}</span></p>
-                <p>Documento: <span>{registrado.documentoR}</span></p>
-                <p>Nombre: <span>{registrado.nombreR}</span></p>
-                <p>Ficha: <span>{registrado.fichaR}</span></p>
-                <p>Area: <span>{registrado.areaR}</span></p>
-                <button type="button" className="btn btn-success" onClick={() => setIdActual(registrado.id)}>Editar</button>
-                <button type="button" className="btn btn-danger" onClick={() => onDelete(registrado.id)}>Eliminar</button>
-            </div>
-            )
-            
-
-        )}
+        <AppMR {...{registrados, onDelete, setIdActual,setregistrados, getregistrados}} />
+        
         </div>
     </React.Fragment>
 )
