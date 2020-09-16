@@ -5,10 +5,18 @@ const CompForm = (props) =>{
 
         //Estado submit del formulario
 
-        const handleSubmit = e =>{
+        const handleSubmit = async(e) =>{
             e.preventDefault();
+            const doc = await db.collection('entradas').doc(entrada.documento).get();
+            
+            if(doc.data()!==undefined){
+                if(documento === doc.data().documento){
+                    actualizarError({verificar:true, msj:'la persona con este documento ya ingreso'})
+                    return;
+                }
+            }
             if(documento.trim() === '' || nombre.trim()==='' || tipopersona==='' || fecha.trim()===''){
-                actualizarError(true)
+                actualizarError({verificar:true, msj:'Ahi campos obligatorios(*)'})
                 return;
             }else{
             props.addOrEditForm(entrada.documento,entrada);
@@ -21,14 +29,18 @@ const CompForm = (props) =>{
                 placa:'',
                 pertenencias:''
             });
-            actualizarError(false);
+            actualizarError({verificar:false, msj:null})
 
         }
 
         }
+        //State de error
 
-        const [error, actualizarError] = useState(false)
-
+        const [error, actualizarError] = useState({
+            verificar: false,
+            msj:null
+        })
+        
         //Crear state de entrada
 
         const [entrada, actualizar_entrada] = useState({
@@ -66,10 +78,11 @@ const CompForm = (props) =>{
 
         const BuscarDocumentoE = async(docu) =>{
             const doc = await db.collection('registrados').doc(docu).get();
-            if(doc.data()!== ''){
+            if(doc.data()!== '' && doc.data() !== undefined){
             const NewNom = doc.data().nombreR
             console.log(doc)
             actualizar_entrada({
+                documento: docu,
                 nombre: NewNom
                 });
             }else{
@@ -103,7 +116,7 @@ const CompForm = (props) =>{
 <h2>Insertar ingreso</h2>
 
 {
-    error ? <p className="alerta-error">Ahi campos obligatorios (*)</p> : null
+    error.verificar ? <p className="alerta-error">{error.msj}</p> : null
 }
 
 <form>

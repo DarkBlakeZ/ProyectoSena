@@ -5,11 +5,19 @@ const CompFormReg = (props) =>{
 
         //Estado submit del formulario
 
-        const handleSubmit = e =>{
+        const handleSubmit = async(e) =>{
             e.preventDefault();
+            const doc = await db.collection('registrados').doc(registrado.documentoR).get();
+            
             if(documentoR.trim() === '' || nombreR.trim()==='' || tipopersonaR==='' || areaR.trim()===''){
-                actualizarError(true)
+                actualizarError({verificar:true, msj:'Ahi campos obligatorios(*)'})
                 return;
+            }
+            if(doc.data()!==undefined){
+            if(documentoR === doc.data().documentoR){
+                actualizarError({verificar:true, msj:'El Documento ya existe'})
+                return;
+            }
             }else{
             props.addOrEditFormReg(registrado.documentoR,registrado);
             actualizar_registrado({
@@ -19,6 +27,7 @@ const CompFormReg = (props) =>{
                 fichaR:'',
                 areaR:''
             });
+            actualizarError({verificar:false, msj:null})
         }
         }
 
@@ -34,7 +43,10 @@ const CompFormReg = (props) =>{
 
         //State de error
 
-        const [error, actualizarError] = useState(false)
+        const [error, actualizarError] = useState({
+            verificar: false,
+            msj:null
+        })
         
         //Funcion para leer todo lo que escribe el usuario
 
@@ -93,7 +105,7 @@ const CompFormReg = (props) =>{
 
 <h2>Insertar Usuario</h2>
 {
-    error ? <p className="alerta-error">Ahi campos obligatorios (*)</p> : null
+    error.verificar ? <p className="alerta-error">{error.msj}</p> : null
 }
 <form
     onSubmit={handleSubmit}
