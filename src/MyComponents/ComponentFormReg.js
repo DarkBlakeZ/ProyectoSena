@@ -114,10 +114,10 @@ const CompFormReg = (props) =>{
     <div className="row">
     <label htmlFor="tipopersonaR">Tipo de persona</label>
   <select className="u-full-width" id="tipopersonaR" name="tipopersonaR" onChange={actualizarState}>
-  <option id="idfuncionario" name="tipopersonaR" value={""}>--Seleccione uno--</option>
-    <option id="idfuncionario" name="tipopersonaR" value={"funcionario"}>Funcionario</option>
-    <option id="idaprendiz" name="tipopersonaR" value={"aprendiz"}>Aprendiz</option>
-    <option id="idvisitante" name="tipopersonaR" value={"visitante"}>Visitante</option>
+  <option id="idfuncionario">--Seleccione uno--</option>
+    <option id="idfuncionario">Funcionario</option>
+    <option id="idaprendiz">Aprendiz</option>
+    <option id="idvisitante">Visitante</option>
   </select>
     </div>
     <label>Documento: </label>

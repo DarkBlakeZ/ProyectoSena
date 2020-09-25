@@ -1,7 +1,35 @@
 import React, { useState, useEffect} from 'react';
+//import DatePicker from 'react-datepicker';
 import {db} from '../firebase';
+//import "react-datepicker/dist/react-datepicker.css";
 
 const CompForm = (props) =>{
+
+            let date = new Date().getDate(); //Current Date
+            let month = new Date().getMonth() + 1; //Current Month
+            const year = new Date().getFullYear(); //Current Year
+            let hour = new Date().getHours();
+            let min = new Date().getMinutes();    
+
+            if(hour<10){
+                hour = 0+hour.toString()
+            }
+
+            if(min<10){
+                min = 0+min.toString()
+            }
+
+            if(month<10){
+                month = 0+month.toString()
+            }
+
+            if(date<10){
+                date = 0+date.toString()
+            }
+
+            let horaAct = hour+':'+min;
+
+            let fechaAct = year+'-'+month+'-'+date
 
         //Estado submit del formulario
 
@@ -9,23 +37,28 @@ const CompForm = (props) =>{
             e.preventDefault();
             const doc = await db.collection('entradas').doc(entrada.documento).get();
             
+        if(props.IdActual===''){
             if(doc.data()!==undefined){
                 if(documento === doc.data().documento){
                     actualizarError({verificar:true, msj:'la persona con este documento ya ingreso'})
                     return;
                 }
             }
-            if(documento.trim() === '' || nombre.trim()==='' || tipopersona==='' || fecha.trim()===''){
+        }
+            if(documento.trim() === '' || nombre.trim()==='' || tipopersona==='' || fecha===''){
                 actualizarError({verificar:true, msj:'Ahi campos obligatorios(*)'})
                 return;
-            }else{
+            }
+            
+            else{
             props.addOrEditForm(entrada.documento,entrada);
             actualizar_entrada({
                 tipopersona:'',
                 documento:'',
                 nombre:'',
-                fecha:'',
-                tiempo:'',
+                fecha:fechaAct,
+                horaEntrada:horaAct,
+                horaSalida:'',
                 placa:'',
                 pertenencias:''
             });
@@ -34,6 +67,22 @@ const CompForm = (props) =>{
         }
 
         }
+
+        //alert(date +'/'+ month +'/'+ year)
+
+        /*
+        const [ShowDiv, UpdShowDiv] = useState({
+            showMe:true
+        })
+
+        const MostrarDiv = () =>{
+            UpdShowDiv({
+                showMe:true
+            })
+        }
+        */
+
+        
         //State de error
 
         const [error, actualizarError] = useState({
@@ -47,8 +96,9 @@ const CompForm = (props) =>{
         tipopersona:'',
         documento:'',
         nombre:'',
-        fecha:'',
-        tiempo:'',
+        fecha:fechaAct,
+        horaEntrada:horaAct,
+        horaSalida:'',
         placa:'',
         pertenencias:''
         });
@@ -65,8 +115,7 @@ const CompForm = (props) =>{
 
         //Extraer los valores
         
-        const {tipopersona,documento,nombre,fecha,tiempo,placa,pertenencias} = entrada;
-
+        const {tipopersona,documento,nombre,fecha,horaEntrada,horaSalida,placa,pertenencias} = entrada;
 
         //-----
 
@@ -80,8 +129,10 @@ const CompForm = (props) =>{
             const doc = await db.collection('registrados').doc(docu).get();
             if(doc.data()!== '' && doc.data() !== undefined){
             const NewNom = doc.data().nombreR
+            const NewTP = doc.data().tipopersonaR
             console.log(doc)
             actualizar_entrada({
+                tipopersona: NewTP,
                 documento: docu,
                 nombre: NewNom
                 });
@@ -93,13 +144,41 @@ const CompForm = (props) =>{
 
         useEffect(()=>{
 
+            let date = new Date().getDate(); //Current Date
+            let month = new Date().getMonth() + 1; //Current Month
+            const year = new Date().getFullYear(); //Current Year
+            let hour = new Date().getHours();
+            let min = new Date().getMinutes();    
+
+            if(hour<10){
+                hour = 0+hour.toString()
+            }
+
+            if(min<10){
+                min = 0+min.toString()
+            }
+
+            if(month<10){
+                month = 0+month.toString()
+            }
+
+            if(date<10){
+                date = 0+date.toString()
+            }
+
+            let horaAct = hour+':'+min;
+
+            let fechaAct = year+'-'+month+'-'+date
+
+
             if(props.IdActual === ''){
                 actualizar_entrada({
                 tipopersona:'',
                 documento:'',
                 nombre:'',
-                fecha:'',
-                tiempo:'',
+                fecha:fechaAct,
+                horaEntrada:horaAct,
+                horaSalida:'',
                 placa:'',
                 pertenencias:''})
             }else{
@@ -119,16 +198,18 @@ const CompForm = (props) =>{
     error.verificar ? <p className="alerta-error">{error.msj}</p> : null
 }
 
-<form>
+<form >
+    
     <div className="row">
     <label htmlFor="tipopersonas">Tipo de persona(*):</label>
-  <select className="u-full-width" id="tipopersonas" name="tipopersona" onChange={actualizarState} required>
-  <option id="idfuncionario" name="tipopersona" value={""}>--Seleccione uno--</option>
-    <option id="idfuncionario" name="tipopersona" value={"funcionario"}>Funcionario</option>
-    <option id="idaprendiz" name="tipopersona" value={"aprendiz"}>Aprendiz</option>
-    <option id="idvisitante" name="tipopersona" value={"visitante"}>Visitante</option>
+  <select className="u-full-width" id="tipopersonas" name="tipopersona" value={tipopersona} onChange={actualizarState} required>
+  <option id="idfuncionario">--Seleccione uno--</option>
+    <option id="idfuncionario">Funcionario</option>
+    <option id="idaprendiz">Aprendiz</option>
+    <option id="idvisitante">Visitante</option>
   </select>
     </div>
+
     <div className="box">
     <label>Documento(*): </label>
     <input
@@ -167,13 +248,21 @@ const CompForm = (props) =>{
         onChange={actualizarState}
         value={fecha}
     />
-    <label>Tiempo: </label>
+    <label>Hora de entrada: </label>
     <input
         type="time"
-        name="tiempo"
+        name="horaEntrada"
         className="u-full-width"
         onChange={actualizarState}
-        value={tiempo}
+        value={horaEntrada}
+    />
+    <label>Hora de salida: </label>
+    <input
+        type="time"
+        name="horaSalida"
+        className="u-full-width"
+        onChange={actualizarState}
+        value={horaSalida}
     />
     <label>Placa: </label>
     <input
@@ -188,6 +277,7 @@ const CompForm = (props) =>{
     <textarea
         name="pertenencias"
         className="u-full-width u-full-height"
+        placeholder={"-cascos \n-portatil\n-etc"}
         onChange={actualizarState}
         value={pertenencias}
     />

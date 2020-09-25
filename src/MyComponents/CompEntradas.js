@@ -83,7 +83,7 @@ const CompListEntradas = () => {
     return(
     <React.Fragment>
         <div>
-        <CompForm {...{addOrEditForm,IdActual,entradas,registrados,getregistradosByDocument,setEntradas}}/>
+        <CompForm {...{addOrEditForm,IdActual,setIdActual,entradas,registrados,getregistradosByDocument,setEntradas}}/>
         <AppM {...{entradas, onDelete, setIdActual,setEntradas, getEntradas}} />
         </div>
     </React.Fragment>

@@ -86,7 +86,8 @@ const AppM = (props)=>{
                             <p>Documento: <span>{entrada.documento}</span></p>
                             <p>Nombre: <span>{entrada.nombre}</span></p>
                             <p>Fecha: <span>{entrada.fecha}</span></p>
-                            <p>Tiempo: <span>{entrada.tiempo}</span></p>
+                            <p>Hora entrada: <span>{entrada.horaEntrada}</span></p>
+                            <p>Hora Salida: <span>{entrada.horaSalida}</span></p>
                             <p>Placa: <span>{entrada.placa}</span></p>
                             <p>Pertenencias: <span>{entrada.pertenencias}</span></p>
                             <button type="button" className="btn btn-success" onClick={() => {
