@@ -6,13 +6,27 @@ import {db} from '../firebase';
 
 const AppM = (props)=>{
 
+            let date = new Date().getDate(); //Current Date
+            let month = new Date().getMonth() + 1; //Current Month
+            const year = new Date().getFullYear(); //Current Year
+            if(month<10){
+                month = 0+month.toString()
+            }
+
+            if(date<10){
+                date = 0+date.toString()
+            }
+            let fechaAct = year+'-'+month+'-'+date
+
 
         const [modal, actualizarModal] = useState({
             abierto: false
         })
 
         const [docuB, actualizarDocuB] = useState({
-            docu:''
+            docu:'',
+            fech1:'',
+            fech2:fechaAct
         })
 
         const actualizarStateB = e => {
@@ -39,7 +53,18 @@ const AppM = (props)=>{
             });  
         }
 
-        const {docu} = docuB
+        const getentradasByFecha = (fech1E,fech2E) => {
+            
+            db.collection('entradas').where("fecha",">=",fech1E).where("fecha","<=",fech2E).onSnapshot((querySnapshot)=>{
+                const docs = [];
+                querySnapshot.forEach((doc) => {
+                    docs.push({...doc.data(), id:doc.id});
+                })
+                props.setEntradas(docs)
+            });  
+        }
+
+        const {docu,fech1,fech2} = docuB
 
         return(
             <>
@@ -72,10 +97,28 @@ const AppM = (props)=>{
                         onChange={actualizarStateB}
                         value={docu}
                         />
+                        <input type="date"
+                        name="fech1"
+                        className="u-full-width button-primary"
+                        onChange={actualizarStateB}
+                        value={fech1}
+                        />
+                        <input type="date"
+                        name="fech2"
+                        className="u-full-width button-primary"
+                        onChange={actualizarStateB}
+                        value={fech2}
+                        />
                         <button
                         type="submit"
                         className="u-full-width button-primary"
                         onClick={()=>{ docu === '' ? props.getEntradas() : getentradasByDocu(docu)}}
+                        >Buscar
+                        </button>
+                        <button
+                        type="submit"
+                        className="u-full-width button-primary"
+                        onClick={()=>getentradasByFecha(fech1,fech2)}
                         >Buscar
                         </button>
                     {

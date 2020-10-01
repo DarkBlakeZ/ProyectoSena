@@ -2,8 +2,17 @@ import React, { useState, useEffect} from 'react';
 //import DatePicker from 'react-datepicker';
 import {db} from '../firebase';
 //import "react-datepicker/dist/react-datepicker.css";
+import AppMRU from './ModalRegistrarUsu'
 
 const CompForm = (props) =>{
+
+            const [modal, actualizarModal] = useState({
+                abierto: false
+            })
+
+            const abrirModal=()=>{
+                actualizarModal({abierto:!modal.abierto})
+            }
 
             let date = new Date().getDate(); //Current Date
             let month = new Date().getMonth() + 1; //Current Month
@@ -46,7 +55,7 @@ const CompForm = (props) =>{
             }
         }
             if(documento.trim() === '' || nombre.trim()==='' || tipopersona==='' || fecha===''){
-                actualizarError({verificar:true, msj:'Ahi campos obligatorios(*)'})
+                actualizarError({verificar:true, msj:'HAY CAMPOS OBLIGATORIOS(*)'})
                 return;
             }
             
@@ -137,8 +146,9 @@ const CompForm = (props) =>{
                 nombre: NewNom
                 });
             }else{
-                alert('No Existe')
-                return
+                if(window.confirm('El documento no existe, ¿Desea registrarlo?')){
+                    abrirModal();
+                }
             }
         }
 
@@ -291,7 +301,8 @@ const CompForm = (props) =>{
 
 </form>
 
-    
+        <AppMRU {...{abrirModal,modal}}/>
+
         </React.Fragment>
 
       ) 

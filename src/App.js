@@ -3,7 +3,8 @@ import CompListEntradas from './MyComponents/CompEntradas';
 import './firebase';
 import {ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import CompListRegistrados from './MyComponents/CompRegistrados';
+import CompFormSalida from './MyComponents/CompSalida';
+
 
 const App = () => {
 
@@ -24,8 +25,8 @@ const App = () => {
         </div>
         <div className="one-half column">
         {  
-            <CompListRegistrados
-            />
+            <CompFormSalida
+            />   
         }
         </div>
         

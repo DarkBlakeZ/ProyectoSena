@@ -40,6 +40,10 @@ html {
   label {
     color: white;
   }
+
+  .labelR {
+    color: black;
+  }
   
   input[type="date"],
   input[type="time"] {

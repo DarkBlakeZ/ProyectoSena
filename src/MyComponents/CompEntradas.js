@@ -2,7 +2,8 @@ import React , {useEffect , useState} from 'react';
 import CompForm from './ComponentForm';
 import {db} from '../firebase';
 import { toast } from 'react-toastify';
-import AppM from './ModalListaEntradas'
+import AppM from './ModalListaEntradas';
+
 
 //import '../includes/boostrap'
 
@@ -85,6 +86,7 @@ const CompListEntradas = () => {
         <div>
         <CompForm {...{addOrEditForm,IdActual,setIdActual,entradas,registrados,getregistradosByDocument,setEntradas}}/>
         <AppM {...{entradas, onDelete, setIdActual,setEntradas, getEntradas}} />
+        
         </div>
     </React.Fragment>
 )
