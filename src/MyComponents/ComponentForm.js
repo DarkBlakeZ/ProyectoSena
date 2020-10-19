@@ -39,20 +39,21 @@ const CompForm = (props) =>{
             let horaAct = hour+':'+min;
 
             let fechaAct = year+'-'+month+'-'+date
+            let fechaActId = year.toString()+month.toString()+date.toString()
 
         //Estado submit del formulario
 
         const handleSubmit = async(e) =>{
             e.preventDefault();
-            const doc = await db.collection('entradas').doc(entrada.documento).get();
+            const doc = await db.collection('entradas').doc(entrada.documento+fechaActId).get();
             
         if(props.IdActual===''){
             if(doc.data()!==undefined){
-                if(documento === doc.data().documento){
-                    actualizarError({verificar:true, msj:'la persona con este documento ya ingreso'})
+                if(documento+fechaActId === doc.data().documento+fechaActId){
+                    actualizarError({verificar:true, msj:'la persona con este documento ya ingreso hoy'})
                     return;
                 }
-            }
+            } 
         }
             if(documento.trim() === '' || nombre.trim()==='' || tipopersona==='' || fecha===''){
                 actualizarError({verificar:true, msj:'HAY CAMPOS OBLIGATORIOS(*)'})
@@ -202,14 +203,15 @@ const CompForm = (props) =>{
 
         <React.Fragment>
 
+<form >
+    
 <h2>Insertar ingreso</h2>
 
 {
     error.verificar ? <p className="alerta-error">{error.msj}</p> : null
 }
 
-<form >
-    
+    <div className="box">
     <div className="row">
     <label htmlFor="tipopersonas">Tipo de persona(*):</label>
   <select className="u-full-width" id="tipopersonas" name="tipopersona" value={tipopersona} onChange={actualizarState} required>
@@ -220,7 +222,9 @@ const CompForm = (props) =>{
   </select>
     </div>
 
-    <div className="box">
+    {
+    props.IdActual === ''?
+    <div>
     <label>Documento(*): </label>
     <input
         type="text"
@@ -231,9 +235,25 @@ const CompForm = (props) =>{
         value={documento}
         required
     />
+    </div>
+    :
+    <div>
+    <label>Documento(*): </label>
+    <input
+        type="text"
+        name="documento"
+        className="u-full-width"
+        placeholder="Ingresar el documento"
+        onChange={actualizarState}
+        value={documento}
+        required
+        disabled
+    />
+    </div>
+}
     <button
         type="submit"
-        className="u-full-width button-primary"
+        className="u-full-width btn btn-success"
         onClick={()=>BuscarDocumentoE(entrada.documento)}
     >Buscar
     </button>
@@ -249,6 +269,7 @@ const CompForm = (props) =>{
         onChange={actualizarState}
         value={nombre}
         required
+        
     />
     <label>Fecha: </label>
     <input
@@ -257,6 +278,7 @@ const CompForm = (props) =>{
         className="u-full-width"
         onChange={actualizarState}
         value={fecha}
+        disabled
     />
     <label>Hora de entrada: </label>
     <input
@@ -293,15 +315,17 @@ const CompForm = (props) =>{
     />
     <button
         type="submit"
-        className="u-full-width button-primary"
+        className="u-full-width btn btn-success"
         onClick={handleSubmit}
     >
         {props.IdActual === '' ? 'Guardar' : 'Actualizar'}
     </button>
 
+    <AppMRU {...{abrirModal,modal}}/>
+
 </form>
 
-        <AppMRU {...{abrirModal,modal}}/>
+        
 
         </React.Fragment>
 

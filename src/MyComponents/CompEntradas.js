@@ -14,12 +14,26 @@ const CompListEntradas = () => {
     const [registrados, setregistrados] = useState([]);
     const [IdActual, setIdActual] = useState("");
     
+    let date = new Date().getDate(); //Current Date
+    let month = new Date().getMonth() + 1; //Current Month
+    const year = new Date().getFullYear(); //Current Year
+
+    if(month<10){
+        month = 0+month.toString()
+    }
+
+    if(date<10){
+        date = 0+date.toString()
+    }
+
+    let fechaActId = year.toString()+month.toString()+date.toString()
+
     const addOrEditForm = async (nomdoc,ObjectE) =>{
 
         try {
             if(IdActual===''){
         
-                await db.collection('entradas').doc(nomdoc).set(ObjectE);
+                await db.collection('entradas').doc(nomdoc+fechaActId).set(ObjectE);
         
                 toast('Agregado exitosamente',{
         

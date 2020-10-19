@@ -3,7 +3,7 @@ import CompListEntradas from './MyComponents/CompEntradas';
 import './firebase';
 import {ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import CompFormSalida from './MyComponents/CompSalida';
+import CompFormSalida from './MyComponents/ComponentSalida';
 
 
 const App = () => {

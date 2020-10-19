@@ -1,10 +1,33 @@
-import React, { useState } from 'react';
+import React, {Fragment ,useState } from 'react';
 import {Button, ModalBody, ModalFooter, Modal} from 'reactstrap';
 import {db} from '../firebase';
-//import '../includes/boostrap'
+import { toast } from 'react-toastify';
 
+const ModalSalida = () => {
 
-const AppM = (props)=>{
+        const [salidas, setSalidas] = useState([]);
+
+        
+    
+        const onDelete =async(id) =>{
+            if(window.confirm('¿Esta seguro de querer eliminar la entrada?')){
+                await db.collection('salidas').doc(id).delete();
+                toast('Eliminado con exito',{
+                    type: 'error',
+                    autoClose: '2500'
+                })
+            }
+        }
+    
+        const getSalidas = () => {
+            db.collection('salidas').onSnapshot((querySnapshot)=>{
+                const docs = [];
+                querySnapshot.forEach((doc) => {
+                    docs.push({...doc.data(), id:doc.id});
+                })
+                setSalidas(docs)
+            });  
+        }
 
         let date = new Date().getDate(); //Current Date
         let month = new Date().getMonth() + 1; //Current Month
@@ -17,6 +40,8 @@ const AppM = (props)=>{
             date = 0+date.toString()
         }
         let fechaAct = year+'-'+month+'-'+date
+
+
 
 
         const [modal, actualizarModal] = useState({
@@ -43,32 +68,32 @@ const AppM = (props)=>{
 
         
 
-        const getentradasByDocu = (docuBE) => {
-            db.collection('entradas').where("documento","==",docuBE).onSnapshot((querySnapshot)=>{
+        const getsalidasByDocu = (docuBE) => {
+            db.collection('salidas').where("SalidaDocumento","==",docuBE).onSnapshot((querySnapshot)=>{
                 const docs = [];
                 querySnapshot.forEach((doc) => {
                     docs.push({...doc.data(), id:doc.id});
                 })
-                props.setEntradas(docs)
+                setSalidas(docs)
             });  
         }
 
-        const getentradasByFecha = (fech1E,fech2E) => {
+        const getsalidasByFecha = (fech1E,fech2E) => {
             
-            db.collection('entradas').where("fecha",">=",fech1E).where("fecha","<=",fech2E).onSnapshot((querySnapshot)=>{
+            db.collection('salidas').where("SalidaFecha",">=",fech1E).where("SalidaFecha","<=",fech2E).onSnapshot((querySnapshot)=>{
                 const docs = [];
                 querySnapshot.forEach((doc) => {
                     docs.push({...doc.data(), id:doc.id});
                 })
-                props.setEntradas(docs)
+                setSalidas(docs)
             });  
         }
 
         const {docu,fech1,fech2} = docuB
 
-        return(
-            <>
-                <Button 
+    return(
+        <Fragment>
+            <Button 
                 className="u-full-width btn btn-success" 
                 color="success" 
                 onClick={()=>abrirModal()}>Mostrar Lista</Button>
@@ -112,32 +137,28 @@ const AppM = (props)=>{
                         <button
                         type="submit"
                         className="u-full-width btn btn-success"
-                        onClick={()=>{ docu === '' ? props.getEntradas() : getentradasByDocu(docu)}}
+                        onClick={()=>{ docu === '' ? getSalidas() : getsalidasByDocu(docu)}}
                         >Buscar
                         </button>
                         <button
                         type="submit"
                         className="u-full-width btn btn-success"
-                        onClick={()=>getentradasByFecha(fech1,fech2)}
+                        onClick={()=>getsalidasByFecha(fech1,fech2)}
                         >Buscar por fechas
                         </button>
                     {
-                    props.entradas.map(
-                        entrada => (
-                        <div className="entrada" key={entrada.id}>
-                            <p>Tipo persona : <span>{entrada.tipopersona}</span></p>
-                            <p>Documento: <span>{entrada.documento}</span></p>
-                            <p>Nombre: <span>{entrada.nombre}</span></p>
-                            <p>Fecha: <span>{entrada.fecha}</span></p>
-                            <p>Hora entrada: <span>{entrada.horaEntrada}</span></p>
-                            <p>Hora Salida: <span>{entrada.horaSalida}</span></p>
-                            <p>Placa: <span>{entrada.placa}</span></p>
-                            <p>Pertenencias: <span>{entrada.pertenencias}</span></p>
-                            <button type="button" className="btn btn-success" onClick={() => {
-                                props.setIdActual(entrada.id)
-                                abrirModal()
-                                }}>Editar</button>
-                            <button type="button" className="btn btn-danger" onClick={() => props.onDelete(entrada.id)}>Eliminar</button>
+                    salidas.map(
+                        salida => (
+                        <div className="entrada" key={salida.id}>
+                            <p>Tipo persona : <span>{salida.SalidaTP}</span></p>
+                            <p>Documento: <span>{salida.SalidaDocumento}</span></p>
+                            <p>Nombre: <span>{salida.SalidaNombre}</span></p>
+                            <p>Fecha: <span>{salida.SalidaFecha}</span></p>
+                            <p>Hora entrada: <span>{salida.SalidaHoraEntrada}</span></p>
+                            <p>Hora Salida: <span>{salida.SalidaHoraSalida}</span></p>
+                            <p>Placa: <span>{salida.SalidaPlaca}</span></p>
+                            <p>Pertenencias: <span>{salida.SalidaPertenencias}</span></p>
+                            <button type="button" className="btn btn-danger" onClick={() => onDelete(salida.id)}>Eliminar</button>
                         </div>
                         )
                     )}
@@ -147,9 +168,8 @@ const AppM = (props)=>{
                         Copyright &times;
                     </ModalFooter>
                 </Modal>
-            </>
-        )
-    }
+        </Fragment>
+    )
+}
 
-
-export default AppM
+export default ModalSalida

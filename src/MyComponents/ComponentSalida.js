@@ -1,9 +1,9 @@
 import React, {Fragment, useState} from 'react'
 import {db} from '../firebase'
+import ModalSalida from './ModalSalidas'
+import { toast } from 'react-toastify';
 
 const CompFormSalida = () => {
-
-    
 
     const [DSalida,setDSalida] = useState({
         SalidaTP:'',
@@ -15,6 +15,11 @@ const CompFormSalida = () => {
         SalidaPlaca:'',
         SalidaPertenencias:''
     })
+
+    const [MostrarS,setMostrarS] = useState({
+        showMe:false
+    })
+
     const actualizarState = e => {
         setDSalida({
             ...DSalida,
@@ -22,15 +27,71 @@ const CompFormSalida = () => {
 
         })
     }
-    
-    const handleSubmitSal = (e) =>{
-        e.preventDefault()
+
+    let date = new Date().getDate(); //Current Date
+    let month = new Date().getMonth() + 1; //Current Month
+    const year = new Date().getFullYear(); //Current Year
+
+    if(month<10){
+        month = 0+month.toString()
     }
 
+    if(date<10){
+        date = 0+date.toString()
+    }
+
+    let fechaActId = year.toString()+month.toString()+date.toString()
+    
+
+    const addSalida = async (nomdoc,ObjectE) =>{
+        try {
+            
+                await db.collection('salidas').doc(nomdoc+fechaActId).set(ObjectE);
+        
+                toast('Agregado exitosamente',{
+        
+                    type: 'success'
+        
+                })
+                
+        } catch (error) {
+            console.error(error);
+        }
+
+    };
+    
     const {SalidaTP,SalidaDocumento,SalidaNombre,SalidaFecha,SalidaHoraEntrada,SalidaHoraSalida,SalidaPlaca,SalidaPertenencias} = DSalida
 
+    const handleSubmitSal = (e) =>{
+        e.preventDefault()
+        addSalida(SalidaDocumento,DSalida)
+        setDSalida({
+            SalidaTP:'',
+            SalidaDocumento:'',
+            SalidaNombre:'',
+            SalidaFecha:'',
+            SalidaHoraEntrada:'',
+            SalidaHoraSalida:'',
+            SalidaPlaca:'',
+            SalidaPertenencias:''
+        })
+    }
+
+    
+
+    
+
     const BuscarDocumentoSalida = async(docu) =>{
-        const doc = await db.collection('entradas').doc(docu).get();
+        if(month<10){
+            month = 0+month.toString()
+        }
+    
+        if(date<10){
+            date = 0+date.toString()
+        }
+        let fechaActId = year.toString()+month.toString()+date.toString()
+
+        const doc = await db.collection('entradas').doc(docu+fechaActId).get();
         if(doc.data()!== '' && doc.data() !== undefined){
         let hour = new Date().getHours();
         let min = new Date().getMinutes();    
@@ -60,7 +121,7 @@ const CompFormSalida = () => {
             SalidaPertenencias:NewPertenencias
             });
         }else{
-            alert('error')
+            alert('No existe ninguna entrada con este documento')
         }
     }
 
@@ -71,14 +132,7 @@ const CompFormSalida = () => {
     <form>
     <div className="box">
     <h2>Registrar Salida</h2>
-        <label htmlFor="salidaTPS">Tipo Persona:</label>
-        <select disabled className="u-full-width" name="SalidaTP" id="salidaTPS" value={SalidaTP} onChange={actualizarState}>
-            <option>--Seleccione uno--</option>
-            <option>Funcionario</option>
-            <option>Aprendiz</option>
-            <option>Visitante</option>
-        </select>
-        <label htmlFor=""></label>
+
     <label>Documento(*): </label>
     <input
         type="text"
@@ -91,14 +145,29 @@ const CompFormSalida = () => {
     />
     <button
         type="submit"
-        className="u-full-width button-primary"
+        className="u-full-width btn btn-success"
         onClick={(e)=>{
+        if(SalidaDocumento!==''){
             e.preventDefault()
             BuscarDocumentoSalida(SalidaDocumento)
+            setMostrarS({showMe:true})
+        }else{
+            setMostrarS({showMe:false})
+        }
         }}
     >Buscar
     </button>
-    
+    {
+    MostrarS.showMe?
+    <div>
+    <label htmlFor="salidaTPS">Tipo Persona:</label>
+    <select disabled className="u-full-width" name="SalidaTP" id="salidaTPS" value={SalidaTP} onChange={actualizarState}>
+        <option>--Seleccione uno--</option>
+        <option>Funcionario</option>
+        <option>Aprendiz</option>
+        <option>Visitante</option>
+    </select>
+
     <label>Nombre(*): </label>
     <input
         type="text"
@@ -107,7 +176,7 @@ const CompFormSalida = () => {
         placeholder="Ingresar el nombre"
         onChange={actualizarState}
         value={SalidaNombre}
-        disabled
+        disabled="false"
     />
     <label>Fecha: </label>
     <input
@@ -157,14 +226,19 @@ const CompFormSalida = () => {
     />
     <button
         type="submit"
-        className="u-full-width button-primary"
+        className="u-full-width btn btn-success"
         onClick={handleSubmitSal}
     >
         Registrar
     </button>
     </div>
+    :null
+    }
+    </div>
     </form>
             
+        <ModalSalida/>
+
         </Fragment>
     )
 }
