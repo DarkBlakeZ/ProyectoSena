@@ -42,7 +42,7 @@ const AppM = (props)=>{
         }
 
         
-
+/*
         const getentradasByDocu = (docuBE) => {
             db.collection('entradas').where("documento","==",docuBE).onSnapshot((querySnapshot)=>{
                 const docs = [];
@@ -63,14 +63,23 @@ const AppM = (props)=>{
                 props.setEntradas(docs)
             });  
         }
+*/
+        const getEntradasByAny = (docuBE,fech1E,fech2E) =>{
+            db.collection('entradas').where("documento","==",docuBE).where("fecha",">=",fech1E).where("fecha","<=",fech2E).onSnapshot((querySnapshot)=>{
+                const docs = [];
+                querySnapshot.forEach((doc) => {
+                    docs.push({...doc.data(), id:doc.id});
+                })
+                props.setEntradas(docs)
+            });  
+        }
 
         const {docu,fech1,fech2} = docuB
 
         return(
             <>
                 <Button 
-                className="u-full-width btn btn-success" 
-                color="success" 
+                className="u-full-width btn btn-primario btn-block" 
                 onClick={()=>abrirModal()}>Mostrar Lista</Button>
 
                 <Modal isOpen={modal.abierto}>
@@ -111,15 +120,9 @@ const AppM = (props)=>{
                         />
                         <button
                         type="submit"
-                        className="u-full-width btn btn-success"
-                        onClick={()=>{ docu === '' ? props.getEntradas() : getentradasByDocu(docu)}}
+                        className="u-full-width btn btn-primario btn-block"
+                        onClick={()=>{ getEntradasByAny(docu,fech1,fech2)}}
                         >Buscar
-                        </button>
-                        <button
-                        type="submit"
-                        className="u-full-width btn btn-success"
-                        onClick={()=>getentradasByFecha(fech1,fech2)}
-                        >Buscar por fechas
                         </button>
                     {
                     props.entradas.map(
@@ -133,11 +136,11 @@ const AppM = (props)=>{
                             <p>Hora Salida: <span>{entrada.horaSalida}</span></p>
                             <p>Placa: <span>{entrada.placa}</span></p>
                             <p>Pertenencias: <span>{entrada.pertenencias}</span></p>
-                            <button type="button" className="btn btn-success" onClick={() => {
+                            <button type="button" className="btn btn-primario btn-block" onClick={() => {
                                 props.setIdActual(entrada.id)
                                 abrirModal()
                                 }}>Editar</button>
-                            <button type="button" className="btn btn-danger" onClick={() => props.onDelete(entrada.id)}>Eliminar</button>
+                            <button type="button" className="btn btn-primario btn-block btn-danger" onClick={() => props.onDelete(entrada.id)}>Eliminar</button>
                         </div>
                         )
                     )}

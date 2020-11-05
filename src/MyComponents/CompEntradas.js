@@ -2,13 +2,16 @@ import React , {useEffect , useState} from 'react';
 import CompForm from './ComponentForm';
 import {db} from '../firebase';
 import { toast } from 'react-toastify';
-import AppM from './ModalListaEntradas';
+import Verificar from './Vefiricar';
+import { Redirect } from 'react-router-dom';
 
 
 //import '../includes/boostrap'
 
 
 const CompListEntradas = () => {
+
+    let rol = sessionStorage.getItem('rol')
 
     const [entradas, setEntradas] = useState([]);
     const [registrados, setregistrados] = useState([]);
@@ -54,19 +57,7 @@ const CompListEntradas = () => {
             console.error(error);
         }
 
-        
-
     };
-
-    const onDelete =async(id) =>{
-        if(window.confirm('¿Esta seguro de querer eliminar la entrada?')){
-            await db.collection('entradas').doc(id).delete();
-            toast('Eliminado con exito',{
-                type: 'error',
-                autoClose: '2500'
-            })
-        }
-    }
 
     const getEntradas = () => {
         db.collection('entradas').onSnapshot((querySnapshot)=>{
@@ -97,9 +88,21 @@ const CompListEntradas = () => {
 
     return(
     <React.Fragment>
+
+        <Verificar />
+
         <div>
+        {
+            rol === 'Supervisor'?
+            (
+            alert('El Supervisor solo puede editar y eliminar registros'),
+            <Redirect to='/consultas' />
+            )
+            :
+            null
+        }
         <CompForm {...{addOrEditForm,IdActual,setIdActual,entradas,registrados,getregistradosByDocument,setEntradas}}/>
-        <AppM {...{entradas, onDelete, setIdActual,setEntradas, getEntradas}} />
+        
         
         </div>
     </React.Fragment>

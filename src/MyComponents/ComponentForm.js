@@ -6,6 +6,12 @@ import AppMRU from './ModalRegistrarUsu'
 
 const CompForm = (props) =>{
 
+            const [IdEncontrado,setIdEncontrado] = useState({
+                verificar:false
+            })
+
+            const [IdNoEncontrado, setIdNoEncontrado] = useState("123")
+
             const [modal, actualizarModal] = useState({
                 abierto: false
             })
@@ -75,7 +81,7 @@ const CompForm = (props) =>{
             actualizarError({verificar:false, msj:null})
 
         }
-
+        setIdEncontrado({verificar:false})
         }
 
         //alert(date +'/'+ month +'/'+ year)
@@ -112,6 +118,7 @@ const CompForm = (props) =>{
         placa:'',
         pertenencias:''
         });
+
         
         //Funcion para leer todo lo que escribe el usuario
 
@@ -123,10 +130,11 @@ const CompForm = (props) =>{
             })
         }
 
+        
         //Extraer los valores
         
         const {tipopersona,documento,nombre,fecha,horaEntrada,horaSalida,placa,pertenencias} = entrada;
-
+       
         //-----
 
         const getEntradaById = async(id) => {
@@ -136,20 +144,30 @@ const CompForm = (props) =>{
                 }
 
         const BuscarDocumentoE = async(docu) =>{
+
+            if(docu===''){
+                alert('No ha ingresado nada en el campo a buscar')
+                return
+            }
             const doc = await db.collection('registrados').doc(docu).get();
             if(doc.data()!== '' && doc.data() !== undefined){
+                
             const NewNom = doc.data().nombreR
             const NewTP = doc.data().tipopersonaR
-            console.log(doc)
+            setIdEncontrado({verificar:true})
+            
             actualizar_entrada({
+                ...entrada,
                 tipopersona: NewTP,
                 documento: docu,
                 nombre: NewNom
                 });
             }else{
+                setIdNoEncontrado(documento)
                 if(window.confirm('El documento no existe, ¿Desea registrarlo?')){
                     abrirModal();
                 }
+                setIdEncontrado({verificar:false})
             }
         }
 
@@ -202,8 +220,8 @@ const CompForm = (props) =>{
         return(
 
         <React.Fragment>
-
-<form >
+<div  className="formulario">
+<form>
     
 <h2>Insertar ingreso</h2>
 
@@ -211,8 +229,9 @@ const CompForm = (props) =>{
     error.verificar ? <p className="alerta-error">{error.msj}</p> : null
 }
 
-    <div className="box">
+
     <div className="row">
+
     <label htmlFor="tipopersonas">Tipo de persona(*):</label>
   <select className="u-full-width" id="tipopersonas" name="tipopersona" value={tipopersona} onChange={actualizarState} required>
   <option id="idfuncionario">--Seleccione uno--</option>
@@ -220,8 +239,8 @@ const CompForm = (props) =>{
     <option id="idaprendiz">Aprendiz</option>
     <option id="idvisitante">Visitante</option>
   </select>
-    </div>
-
+    
+  </div>
     {
     props.IdActual === ''?
     <div>
@@ -233,7 +252,8 @@ const CompForm = (props) =>{
         placeholder="Ingresar el documento"
         onChange={actualizarState}
         value={documento}
-        required
+        required={true}
+        disabled={false}
     />
     </div>
     :
@@ -246,21 +266,28 @@ const CompForm = (props) =>{
         placeholder="Ingresar el documento"
         onChange={actualizarState}
         value={documento}
-        required
-        disabled
+        required={true}
+        disabled={true}
     />
     </div>
 }
     <button
         type="submit"
-        className="u-full-width btn btn-success"
-        onClick={()=>BuscarDocumentoE(entrada.documento)}
+        className="u-full-width btn btn-primario btn-block"
+        onClick={(e)=>{
+            e.preventDefault()
+            BuscarDocumentoE(documento)
+        }}
     >Buscar
     </button>
     
 
-    </div>
+
     <label>Nombre(*): </label>
+    <div>
+{
+    IdEncontrado.verificar === true?
+    
     <input
         type="text"
         name="nombre"
@@ -269,8 +296,22 @@ const CompForm = (props) =>{
         onChange={actualizarState}
         value={nombre}
         required
+        disabled
         
     />
+    :
+    <input
+        type="text"
+        name="nombre"
+        className="u-full-width"
+        placeholder="Ingresar el nombre"
+        onChange={actualizarState}
+        value={nombre}
+        required
+    />
+}
+</div>
+    
     <label>Fecha: </label>
     <input
         type="date"
@@ -287,6 +328,7 @@ const CompForm = (props) =>{
         className="u-full-width"
         onChange={actualizarState}
         value={horaEntrada}
+        disabled={true}
     />
     <label>Hora de salida: </label>
     <input
@@ -309,23 +351,24 @@ const CompForm = (props) =>{
     <textarea
         name="pertenencias"
         className="u-full-width u-full-height"
-        placeholder={"-cascos \n-portatil\n-etc"}
+        placeholder={"-cascos\n-portatil\n-etc"}
         onChange={actualizarState}
         value={pertenencias}
     />
+    <AppMRU {...{abrirModal,modal,IdNoEncontrado}}/>
     <button
         type="submit"
-        className="u-full-width btn btn-success"
+        className="u-full-width btn btn-primario btn-block"
         onClick={handleSubmit}
     >
         {props.IdActual === '' ? 'Guardar' : 'Actualizar'}
     </button>
 
-    <AppMRU {...{abrirModal,modal}}/>
+    
 
 </form>
 
-        
+</div>   
 
         </React.Fragment>
 

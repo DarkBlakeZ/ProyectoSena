@@ -10,7 +10,7 @@ const ModalSalida = () => {
         
     
         const onDelete =async(id) =>{
-            if(window.confirm('¿Esta seguro de querer eliminar la entrada?')){
+            if(window.confirm('¿Esta seguro de querer eliminar la salida?')){
                 await db.collection('salidas').doc(id).delete();
                 toast('Eliminado con exito',{
                     type: 'error',
@@ -94,8 +94,7 @@ const ModalSalida = () => {
     return(
         <Fragment>
             <Button 
-                className="u-full-width btn btn-success" 
-                color="success" 
+                className="u-full-width btn btn-primario btn-block" 
                 onClick={()=>abrirModal()}>Mostrar Lista</Button>
 
                 <Modal isOpen={modal.abierto}>
@@ -136,13 +135,13 @@ const ModalSalida = () => {
                         />
                         <button
                         type="submit"
-                        className="u-full-width btn btn-success"
+                        className="u-full-width btn btn-primario btn-block"
                         onClick={()=>{ docu === '' ? getSalidas() : getsalidasByDocu(docu)}}
                         >Buscar
                         </button>
                         <button
                         type="submit"
-                        className="u-full-width btn btn-success"
+                        className="u-full-width btn btn-primario btn-block"
                         onClick={()=>getsalidasByFecha(fech1,fech2)}
                         >Buscar por fechas
                         </button>
@@ -158,7 +157,7 @@ const ModalSalida = () => {
                             <p>Hora Salida: <span>{salida.SalidaHoraSalida}</span></p>
                             <p>Placa: <span>{salida.SalidaPlaca}</span></p>
                             <p>Pertenencias: <span>{salida.SalidaPertenencias}</span></p>
-                            <button type="button" className="btn btn-danger" onClick={() => onDelete(salida.id)}>Eliminar</button>
+                            <button type="button" className="btn btn-primario btn-danger" onClick={() => onDelete(salida.id)}>Eliminar</button>
                         </div>
                         )
                     )}

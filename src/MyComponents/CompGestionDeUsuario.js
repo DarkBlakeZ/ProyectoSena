@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import {ModalBody, ModalFooter, Modal} from 'reactstrap';
 import {db} from '../firebase';
 import { toast } from 'react-toastify';
 
-const AppMRU = (props) => {
+const CompGDUsuarios = (props) => {
 
-    let rol = sessionStorage.getItem('rol')
+    let rol = sessionStorage.getItem("rol")
 
     const [registrados, setregistrados] = useState([]);
     const [IdActualR, setIdActualR] = useState("");
@@ -73,6 +72,7 @@ const AppMRU = (props) => {
             fichaR:'',
             areaR:''
         });
+        setIdActualR("")
         actualizarError({verificar:false, msj:null})
     }
     }
@@ -184,35 +184,20 @@ const AppMRU = (props) => {
 
     return(
         <>
-            <Modal isOpen={props.modal.abierto}>
-
-                    <div className="modal-header">
-                    <h5 className="modal-title">Usuarios</h5>
-
-                    <button 
-                    color="success" 
-                    type="button" 
-                    aria-label="Close" 
-                    data-dismiss="modal" 
-                    className="close" 
-                    onClick={()=>props.abrirModal()}>
-                    <span aria-hidden="true">&times;</span>
-                    </button>
-                    
-                    </div>
-                <ModalBody>
 {
     error.verificar ? <p className="alerta-error">{error.msj}</p> : null
 }
 <form>
-    <label className="labelR">Tipo de persona(*): </label>
+    <h2>Registrar Usuario</h2>
+    <label className="labelR">Tipo de persona: </label>
     <select name="tipopersonaR" value={tipopersonaR} onChange={actualizarState} className="u-full-width">
         <option>--Seleccione uno--</option>
         <option>Funcionario</option>
         <option>Aprendiz</option>
         <option>Visitante</option>
     </select>
-    <label className="labelR">Documento(*): </label>
+    
+    <label className="labelR">Documento: </label>
     <input
         type="text"
         name="documentoR"
@@ -221,8 +206,10 @@ const AppMRU = (props) => {
         onChange={actualizarState}
         value={documentoR}
         required
+        disabled={ IdActualR===''?false:true}
     />
-    <label className="labelR">Nombre(*): </label>
+
+    <label className="labelR">Nombre: </label>
     <input
         type="text"
         name="nombreR"
@@ -242,7 +229,7 @@ const AppMRU = (props) => {
         onChange={actualizarState}
         value={fichaR}
     />
-    <label htmlFor="areaRS" className="labelR">Area(*):</label>
+    <label htmlFor="areaRS" className="labelR">Area</label>
   <select className="u-full-width" id="areaRS" name="areaR" value={areaR} onChange={actualizarState}>
   <option id="idfuncionarioR">--Seleccione uno--</option>
     <option id="idTER">TIC y Electronica</option>
@@ -256,7 +243,11 @@ const AppMRU = (props) => {
         className="u-full-width btn btn-primario btn-block"
         onClick={(e)=>{
             e.preventDefault()
+            if(rol === 'Supervisor' && IdActualR===''){
+            alert('El supervisor no puede registrar datos')
+            }else{
             handleSubmit()
+        }
         }}
     >
         {IdActualR === '' ? 'Guardar' : 'Actualizar'}
@@ -326,14 +317,8 @@ const AppMRU = (props) => {
         :null
         }
 
-                </ModalBody>
-
-                <ModalFooter>
-                    Copyright &times;
-                </ModalFooter>
-            </Modal>
         </>
     )
 }
 
-export default AppMRU
+export default CompGDUsuarios

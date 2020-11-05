@@ -1,9 +1,11 @@
 import React, {Fragment, useState} from 'react'
 import {db} from '../firebase'
-import ModalSalida from './ModalSalidas'
 import { toast } from 'react-toastify';
+import { Redirect } from 'react-router-dom';
 
 const CompFormSalida = () => {
+
+    let rol = sessionStorage.getItem('rol')
 
     const [DSalida,setDSalida] = useState({
         SalidaTP:'',
@@ -82,16 +84,10 @@ const CompFormSalida = () => {
     
 
     const BuscarDocumentoSalida = async(docu) =>{
-        if(month<10){
-            month = 0+month.toString()
-        }
-    
-        if(date<10){
-            date = 0+date.toString()
-        }
-        let fechaActId = year.toString()+month.toString()+date.toString()
 
+        let fechaActId = year.toString()+month.toString()+date.toString()
         const doc = await db.collection('entradas').doc(docu+fechaActId).get();
+        
         if(doc.data()!== '' && doc.data() !== undefined){
         let hour = new Date().getHours();
         let min = new Date().getMinutes();    
@@ -121,14 +117,23 @@ const CompFormSalida = () => {
             SalidaPertenencias:NewPertenencias
             });
         }else{
-            alert('No existe ninguna entrada con este documento')
+            alert('No existe ninguna entrada con este documento el dia de hoy')
         }
     }
 
 
     return(
     <Fragment>
-    
+    {
+        rol === 'Supervisor'?
+        (
+        alert('El Supervisor solo puede editar y eliminar registros'),
+        <Redirect to='/consultas' />
+        )
+        :
+        null
+    }
+    <div  className="formulario">
     <form>
     <div className="box">
     <h2>Registrar Salida</h2>
@@ -145,7 +150,7 @@ const CompFormSalida = () => {
     />
     <button
         type="submit"
-        className="u-full-width btn btn-success"
+        className="u-full-width btn btn-primario btn-block"
         onClick={(e)=>{
         if(SalidaDocumento!==''){
             e.preventDefault()
@@ -226,7 +231,7 @@ const CompFormSalida = () => {
     />
     <button
         type="submit"
-        className="u-full-width btn btn-success"
+        className="u-full-width btn btn-primario btn-block"
         onClick={handleSubmitSal}
     >
         Registrar
@@ -236,8 +241,8 @@ const CompFormSalida = () => {
     }
     </div>
     </form>
-            
-        <ModalSalida/>
+    </div>        
+
 
         </Fragment>
     )
