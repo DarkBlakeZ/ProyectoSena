@@ -128,6 +128,7 @@ const ConsultarSalidas = () => {
                                 <th scope="col">Documento</th>
                                 <th scope="col">Nombre</th>
                                 <th scope="col">Fecha</th>
+                                <th scope="col">Hora de entrada</th>
                                 <th scope="col">Hora de salida</th>
                                 <th scope="col">Placa</th>
                                 <th scope="col">Pertenencias</th>
@@ -149,6 +150,7 @@ const ConsultarSalidas = () => {
                                             <td>{salida.SalidaDocumento}</td>
                                             <td>{salida.SalidaNombre}</td>
                                             <td>{salida.SalidaFecha}</td>
+                                            <td>{salida.SalidaHoraEntrada}</td>
                                             <td>{salida.SalidaHoraSalida}</td>
                                             <td>{salida.SalidaPlaca}</td>
                                             <td>{salida.SalidaPertenencias}</td>

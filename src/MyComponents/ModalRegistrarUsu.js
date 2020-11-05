@@ -73,6 +73,7 @@ const AppMRU = (props) => {
             fichaR:'',
             areaR:''
         });
+        setIdActualR("")
         actualizarError({verificar:false, msj:null})
     }
     }

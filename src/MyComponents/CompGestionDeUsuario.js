@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {db} from '../firebase';
 import { toast } from 'react-toastify';
+import { ownerWindow } from '@material-ui/core';
 
 const CompGDUsuarios = (props) => {
 
@@ -295,7 +296,52 @@ const CompGDUsuarios = (props) => {
             Ocultar
         </button>
 
-        {registrados.map(
+        <table class="table">
+            
+            {
+            ownerWindow().innerWidth >= 778?
+                <thead class="thead-dark">
+                <tr>
+                <th scope="col">Tipo persona</th>
+                <th scope="col">Documento</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Ficha</th>
+                <th scope="col">Area</th>
+                <th scope="col">Editar</th>
+                <th scope="col">Eliminar</th>
+                </tr>
+                </thead>
+                :null    
+            }
+            
+            <tbody>
+            
+            {
+                
+                ownerWindow().innerWidth >= 778?
+                registrados.map(
+                    registrado =>(
+                        <tr>
+                            <td>{registrado.tipopersonaR}</td>
+                            <td>{registrado.documentoR}</td>
+                            <td>{registrado.nombreR}</td>
+                            <td>{registrado.fichaR}</td>
+                            <td>{registrado.areaR}</td>
+                            <td><button type="button" onClick={() => {
+                            setIdActualR(registrado.id)
+                            }}><i class="fa fa-edit"></i></button></td>
+                            <td><button type="button" onClick={() => onDelete(registrado.id)}><i class="fa fa-eraser"></i></button></td>
+                        </tr>
+                    )
+                )
+                :null            
+            }    
+            </tbody>
+            </table>
+
+        {
+        ownerWindow().innerWidth<777?
+        registrados.map(
             registrado => (
             <div className="entrada" key={registrado.id}>
                 <p>Tipo persona : <span>{registrado.tipopersonaR}</span></p>
@@ -309,9 +355,10 @@ const CompGDUsuarios = (props) => {
                 <button type="button" className="btn btn-primario btn-block btn-danger" onClick={() => onDelete(registrado.id)}>Eliminar</button>
             </div>
             )
-            
-
-        )}
+        
+        )
+        :null
+    }
         </div>
 
         :null
