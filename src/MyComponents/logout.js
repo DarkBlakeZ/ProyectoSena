@@ -7,8 +7,7 @@ const CompLogout = () =>{
 
     return(
         <>
-        {(
-            
+        {(          
             alert('Deslogueado con exito'),
             <Redirect to='/' />
         )}

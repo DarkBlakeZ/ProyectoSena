@@ -221,6 +221,7 @@ const AppMRU = (props) => {
         onChange={actualizarState}
         value={documentoR}
         required
+        disabled={ IdActualR===''?false:true}
     />
     <label className="labelR">Nombre(*): </label>
     <input
