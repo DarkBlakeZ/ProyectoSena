@@ -7,8 +7,6 @@ const ModalSalida = () => {
 
         const [salidas, setSalidas] = useState([]);
 
-        
-    
         const onDelete =async(id) =>{
             if(window.confirm('¿Esta seguro de querer eliminar la salida?')){
                 await db.collection('salidas').doc(id).delete();

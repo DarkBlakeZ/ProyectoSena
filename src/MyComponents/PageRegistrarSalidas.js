@@ -10,8 +10,6 @@ const CompRegSalida = () => {
     return(
         <>
         
-        
-        <Verificar/>
         <CompSideBar/>
         <div className="content">
             <CompFormSalida />

@@ -22,6 +22,10 @@ const AppM = (props)=>{
         const [modal, actualizarModal] = useState({
             abierto: false
         })
+        
+        const abrirModal=()=>{
+            actualizarModal({abierto:!modal.abierto})
+        }
 
         const [docuB, actualizarDocuB] = useState({
             docu:'',
@@ -37,9 +41,7 @@ const AppM = (props)=>{
             })
         }
 
-        const abrirModal=()=>{
-            actualizarModal({abierto:!modal.abierto})
-        }
+        
 
         
 /*
